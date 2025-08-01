@@ -1,11 +1,11 @@
 #include <LiquidCrystal.h>
 
-// configurarea pinilor pentru ecranul LCD
+// LCD pins configuration
 const int rs = 8, en = 7, d4 = A0, d5 = A1, d6 = A2, d7 = A3;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int contrast = 75;
 
-// definirea pinilor pentru shift register, butoane și buzzer
+// pins for shift register, buttons, and buzzer
 int latchPin = 11;
 int clockPin = 9;  
 int dataPin = 12; 
@@ -18,18 +18,18 @@ int buzzer = 13;
 
 byte leds = 0;
 
-// vectori pentru generarea solutiei si stocarea raspunsurilor
+// arrays for generating the solution and storing guesses
 int original[] = {0, 1, 2, 3, 4};
-int auxiliar[5];  // copie a vectorului original, folosita pentru amestecare
-int solution[4];  // secventa care trebuie ghicita
-int myGuess[4];   // incercarea curenta a jucatorului
+int auxiliar[5];  // copy of the original array used for shuffling
+int solution[4];  // sequence to be guessed
+int myGuess[4];   // current player guess
 
 bool gameOver = false;
 int count = 0;
 int wrongGuesses = 0;
-int maxLimit = 10; // dupa 10 raspunsuri gresite este game over
+int maxLimit = 10; // after 10 wrong guesses, game over
 
-// verifica daca myGuess este raspunsul corect
+// checks if myGuess is the correct solution
 bool isSolution()
 {
   for(int i = 0; i < 4; i++)
@@ -42,7 +42,7 @@ bool isSolution()
   return true;
 }
 
-// verifica daca o culoare a fost deja selectata in incercarea curenta
+// checks if a color has already been selected in the current guess
 bool inMyGuess(int x)
 {
   for(int i = 0; i < count; i++)
@@ -55,7 +55,7 @@ bool inMyGuess(int x)
   return false;
 }
 
-// genereaza o secventa aleatoare de 4 culori diferite
+// generates a random sequence of 4 different colors
 void generateSolution()
 {
   for (int i = 0; i < 5; i++) 
@@ -63,7 +63,7 @@ void generateSolution()
     auxiliar[i] = original[i];
   }
 
-  // algoritmul de amestecare (Fisher–Yates)
+  // Fisher–Yates shuffle algorithm
   for (int i = 4; i > 0; i--) 
   {
     int j = random(i + 1);
@@ -72,14 +72,14 @@ void generateSolution()
     auxiliar[j] = aux;
   }
 
-  // ia primele 4 elemente ca solutie ce trebuie ghicita de jucator
+  // take the first 4 elements as the solution to be guessed
   for (int i = 0; i < 4; i++) 
   {
     solution[i] = auxiliar[i];
   }
 }
 
-// stinge toate LED-urile
+// turns off all LEDs
 void resetLeds()
 {
   for(int i = 0; i < 5; i++)
@@ -89,7 +89,7 @@ void resetLeds()
   updateShiftRegister();
 }
 
-// citeste apasarile de buton si seteaza LED-ul corespunzator
+// reads button presses and sets the corresponding LED
 void readButton()
 {
   if(digitalRead(btnWhite) == LOW && !inMyGuess(4))
@@ -139,10 +139,10 @@ void readButton()
       }
     }
   }
-  updateShiftRegister(); // afiseaza LED-urile active
+  updateShiftRegister(); // update the active LEDs on the shift register
 }
 
-// trimite starea LED-urilor catre shift register
+// sends the LED states to the shift register
 void updateShiftRegister()
 {
   digitalWrite(latchPin, LOW);
@@ -150,7 +150,7 @@ void updateShiftRegister()
   digitalWrite(latchPin, HIGH);
 }
 
-// afiseaza pe LCD numarul de culori care se afla pe pozitia corecta, respectiv gresita
+// displays on the LCD the number of colors that are in the correct position and the number of correct colors in wrong positions
 void showHint()
 {
   int right =0, wrong = 0;
@@ -198,7 +198,7 @@ void gameLost()
   lcd.setCursor(0, 1);
   lcd.print("The solution was");
 
-  // aiseaza solutia corecta
+   // display the correct solution
   resetLeds();
   delay(4000);
   for(int i = 0; i < 4; i++)
@@ -252,7 +252,7 @@ void loop()
 {
   while(!gameOver)
   {
-     if(count < 4) // daca inca nu au fost alese 4 leduri mai citeste unul
+     if(count < 4) // if less than 4 LEDs are chosen, read one more button
      {
        readButton();
      }
