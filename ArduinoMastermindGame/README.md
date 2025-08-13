@@ -31,9 +31,9 @@ Guess the correct combination of 4 unique colors (out of 5 possible) in the corr
     - How many colors are **correct and in the right position**.
     - How many colors are **correct but in the wrong position**.
 - The buzzer gives audio feedback:
-  - ✅ High-pitched tones for a win
-  - ❌ Descending tones for game over
-  - ⚠️ Mid-pitched tones for incorrect guess
+  - High-pitched tones for a win
+  - Descending tones for game over
+  - Mid-pitched tones for incorrect guess
 - The game ends when:
   - The player guesses the correct combination
   - OR reaches the 10-attempt limit
